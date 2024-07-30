@@ -1,0 +1,67 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  NotFoundException,
+  Query,
+} from '@nestjs/common';
+import { Organization } from '../models/organization.schema';
+import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { OrganizationsService } from './organizations.service';
+import { OrganizationType } from '../types/organization.type';
+
+@Controller('organizations')
+export class OrganizationController {
+  constructor(private readonly organizationService: OrganizationsService) { }
+  @Get('/by-org')
+  async getOrganizationByOrg(@Query('organization') organization_name: string, @Query('organizationType') organizationType: OrganizationType) {
+    const organization = await this.organizationService.getOrganizationByOrg(organization_name, organizationType);
+    if (!organization) {
+      throw new NotFoundException('Organization not found');
+    }
+    return organization;
+  }
+  @Get()
+  async findAll(): Promise<Organization[]> {
+    return this.organizationService.findAll();
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<Organization> {
+    return this.organizationService.findById(id);
+  }
+
+  @Post()
+  async create(@Body() createOrganizationDto: any) {
+    return this.organizationService.create(createOrganizationDto);
+  }
+  @Post('create-multiple')
+  async createMultipleOrganization(
+    @Body() createOrganizationDtos: CreateOrganizationDto[],
+  ): Promise<Organization[]> {
+    console.log('Creating multiple organizations:', createOrganizationDtos);
+    return this.organizationService.createMultipleOrganization(createOrganizationDtos);
+  }
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() organization: Organization,
+  ): Promise<Organization> {
+    return this.organizationService.update(id, organization);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<Organization> {
+    return this.organizationService.delete(id);
+  }
+  // organization user ------section
+
+  @Post('create-organization-user')
+  async createOrganizationUser(@Body() organizationUser: any): Promise<any> {
+    return this.organizationService.createOrganizationUser(organizationUser);
+  }
+}
