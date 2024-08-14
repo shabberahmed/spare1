@@ -105,6 +105,7 @@ export class PaymentsController {
       );
     }
   }
+  
 
   @Get('base/auth')
   @ApiOperation({ summary: 'Get Razorpay Basic Authentication' })
@@ -189,6 +190,26 @@ export class PaymentsController {
       return { success: true, data: result };
     } catch (error) {
       return { success: false, message: error.message };
+    }
+  }
+
+  @Post(':paymentID/transfers')
+  async transferRoute(
+    @Param('paymentID') paymentID: string,
+    @Body() transferData: any,
+  ): Promise<void> {
+    try {
+      // const amount = transferData.amount;
+      // console.log(amount)
+      await this.paymentService.transferRoute(paymentID, transferData);
+    } catch (err) {
+      throw new HttpException(
+        {
+          status: err.response ? err.response.status : HttpStatus.INTERNAL_SERVER_ERROR,
+          error: err.response ? err.response.data : err.message,
+        },
+        err.response ? err.response.status : HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

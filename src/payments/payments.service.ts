@@ -143,13 +143,13 @@ export class PaymentsService {
   }
   
 
-  async transferRoute(paymentID: string, transferData: any, amount: number): Promise<void> {
+  async transferRoute(paymentID: string, transferData: any): Promise<void> {
     try {
       const requestBody = {
         transfers: [
           {
-            account: transferData.acc_id,
-            amount: amount,
+            account: transferData.account,
+            amount: transferData.amount,
             currency: 'INR',
             notes: {
               name: transferData.name,
@@ -171,7 +171,7 @@ export class PaymentsService {
           },
         },
       );
-      console.log('Response:', response.data);
+      console.log('Response:-----------------------', response.data);
     } catch (err) {
       if (err.response) {
         console.error('Error Response Data:', err.response.data);
